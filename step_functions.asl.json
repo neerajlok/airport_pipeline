@@ -1,0 +1,72 @@
+{
+  "Comment": "A description of my state machine",
+  "StartAt": "StartCrawler",
+  "States": {
+    "StartCrawler": {
+      "Type": "Task",
+      "Parameters": {
+        "Name": "raw_data_crawler"
+      },
+      "Resource": "arn:aws:states:::aws-sdk:glue:startCrawler",
+      "Next": "GetCrawler"
+    },
+    "GetCrawler": {
+      "Type": "Task",
+      "Parameters": {
+        "Name": "raw_data_crawler"
+      },
+      "Resource": "arn:aws:states:::aws-sdk:glue:getCrawler",
+      "Next": "Choice"
+    },
+    "Choice": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.Crawler.State",
+          "StringEquals": "RUNNING",
+          "Next": "Wait"
+        }
+      ],
+      "Default": "Glue StartJobRun"
+    },
+    "Glue StartJobRun": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "airline_processing"
+      },
+      "Next": "SNS Publish",
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.TaskFailed"
+          ],
+          "Next": "SNS Publish (1)"
+        }
+      ]
+    },
+    "SNS Publish (1)": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:us-east-1:992382771476:airline-topic",
+        "Message": "Glue job has failed, kindly check the logs"
+      },
+      "End": true
+    },
+    "Wait": {
+      "Type": "Wait",
+      "Seconds": 30,
+      "Next": "GetCrawler"
+    },
+    "SNS Publish": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "Message": "Total run completed",
+        "TopicArn": "arn:aws:sns:us-east-1:992382771476:airline-topic"
+      },
+      "End": true
+    }
+  }
+}
