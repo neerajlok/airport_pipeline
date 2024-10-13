@@ -10,7 +10,7 @@ This project implements a fully automated, scalable data engineering pipeline fo
 - [Data Flow](#data-flow)
 - [Redshift Insights](#redshift-insights)
 - [How to Run the Pipeline](#how-to-run-the-pipeline)
-- [Contact](#contact)
+
 
 ## Overview
 This pipeline is designed to ingest daily CSV files containing flight data and transform them through AWS services. It is triggered upon the upload of a CSV file to an S3 bucket and follows an automated series of AWS Step Functions to:
@@ -20,7 +20,7 @@ This pipeline is designed to ingest daily CSV files containing flight data and t
 4. Update materialized views on Redshift to provide actionable insights.
 
 ## Architecture
-![Architecture Diagram](path_to_diagram.png) <!-- Insert your architecture diagram here -->
+![Architecture Diagram](https://github.com/neerajlok/airport_pipeline/blob/main/Airlines.png) 
 
 ### Key Components:
 - **Amazon S3**: Stores raw CSV files containing flight data.
@@ -52,9 +52,12 @@ This pipeline is designed to ingest daily CSV files containing flight data and t
 
 ## Redshift Insights
 The materialized views in Amazon Redshift provide key insights, including:
-- **Average Delay per Airline**: Analyzing flight delays by carrier.
-- **On-Time Performance**: Evaluating on-time performance across different airports.
-- **High-Delay Flights**: Identifying flights with significant delays.
+- **Average Delay per Airline**
+- **On-Time Performance**
+- **High-Delay Flights**
+- **Delays by state**
+- **Most Frequent Cities**
+- **Flight count by airport**
 
 ## How to Run the Pipeline
 1. Upload the daily flight CSV file to the designated S3 bucket.
